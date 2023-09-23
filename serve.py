@@ -92,8 +92,10 @@ def guardian_approve(data: GuardianApproveInput, api_key: str = Header(None)):
 
 @app.post("/restorekey")
 def restore_key(old_user_address: str):
+    GUARDIAN_THRESHOLD = 3
     entry = KEYS_AND_GUARDIANS.get(old_user_address)
-    if not entry or entry["approvals"] < 3:
+       
+    if not entry or entry["approvals"] < GUARDIAN_THRESHOLD:
         raise HTTPException(status_code=400, detail="Insufficient approvals or address not found")
 
     # Decrypt the backup key
@@ -121,4 +123,4 @@ def restore_key(old_user_address: str):
 
 if __name__ == "__main__":
   import uvicorn
-  uvicorn.run(app, host="127.0.0.1", port=8000)
+  uvicorn.run(app, host="127.0.0.1", port=9000)
