@@ -1,11 +1,42 @@
 from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List
+from typing import List, Any
 import hashlib
 from cryptography.hazmat.primitives import serialization, hashes, asymmetric
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
+
+app = FastAPI()
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class RawRequestMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        body = await request.body()
+        print(f"Request method: {request.method}")
+        print(f"Request URL: {request.url}")
+        print(f"Request headers: {dict(request.headers)}")
+        print(f"Request body: {body.decode()}")
+
+        response = await call_next(request)
+        return response
+
+app.add_middleware(RawRequestMiddleware)
+
+origins = [
+    "http://localhost",  # For local development
+    
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 PRIVATE_KEY = rsa.generate_private_key(
     public_exponent=65537,
@@ -13,10 +44,8 @@ PRIVATE_KEY = rsa.generate_private_key(
     backend=default_backend()
 )
 
-app = FastAPI()
-
 class BackupKey(BaseModel):
-    enc_backup_key: str
+    enc_backup_key: dict
     address: str
     approved_guardians: List[str]
 
