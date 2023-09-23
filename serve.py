@@ -121,6 +121,13 @@ def restore_key(old_user_address: str):
 
     return {"encrypted_key": encrypted_key}
 
+class AnyInput(BaseModel):
+    data: Any
+
+@app.post("/test")
+def test_endpoint(input_data: AnyInput):
+    return {"received_data": input_data.data}
+
 if __name__ == "__main__":
   import uvicorn
   uvicorn.run(app, host="127.0.0.1", port=9000)
