@@ -45,15 +45,15 @@ def store_backup_key():
 def guardian_approve():
     print('guardian_approve')
     data = request.json
-    old_loser_address = data['oldLoserAddress']
+    old_loser_address = data['old_loser_address']
 
-    # Verify the API key for the provided address
+    # Verify the Guardian public key for the provided address
     entry = KEYS_AND_GUARDIANS.get(old_loser_address)
-    if not entry or data['guardianPublicKey'] not in entry['guardians']:
-        return {"status": "Not authenticated"}, 401
+    if not entry or data['guardian_public_key'] not in entry['guardians']:
+        return {"status": "Not an approved guardian for the provided wallet"}, 401
 
     # Combine and hash the input parameters
-    combined_data = data['oldLoserAddress'] + data['guardianPublicKey'] + data['newLoserAddress'];
+    combined_data = data['old_loser_address'] + data['guardian_public_key'] + data['new_loser_address'];
     data_hash = hashlib.sha256(combined_data.encode()).digest()
 
     # Load the guardian's provided public key
