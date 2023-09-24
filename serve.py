@@ -98,7 +98,7 @@ def guardian_approve():
 
     return {"status": "Approved"}, 200
 
-@app.route('/restorekey', methods=['POST'])
+@app.route('/recoverkey', methods=['POST'])
 def restore_key():
     GUARDIAN_THRESHOLD = 2
     print('restorekey')
@@ -111,7 +111,7 @@ def restore_key():
     if not entry:
         abort(400, "Address not found")
     
-    if entry["approvals"] < GUARDIAN_THRESHOLD:
+    if entry['approvals'] < GUARDIAN_THRESHOLD:
         abort(400, "Insufficient approvals")
 
     # Decrypt the backup key
@@ -138,11 +138,6 @@ def restore_key():
     # )
 
     return {'encrypted_key': decrypted_key}, 200
-
-@app.route('/test', methods=['POST'])
-def test_endpoint():
-    input_data = request.json['data']
-    return jsonify({"received_data": input_data})
 
 if __name__ == "__main__":
     load_state()
