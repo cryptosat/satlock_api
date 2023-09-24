@@ -27,6 +27,7 @@ def read_root():
 
 @app.route('/storebackupkey', methods=['POST'])
 def store_backup_key():
+    print('store_backup_key')
     key = request.json
 
     KEYS_AND_GUARDIANS[key['address']] = {
@@ -43,22 +44,22 @@ def store_backup_key():
 
 @app.route('/guardianapprove', methods=['POST'])
 def guardian_approve():
+    print('guardian_approve')
     data = request.json
-    api_key = request.headers.get('Authorization')
-
-    old_loser_address = data['old_loser_address']
+    old_loser_address = data['oldLoserAddress']
 
     # Verify the API key for the provided address
     entry = KEYS_AND_GUARDIANS.get(old_loser_address)
-    if not entry or api_key not in entry['guardians']:
+    if not entry or data['guardianPublicKey'] not in entry['guardians']:
         return {"status": "Not authenticated"}, 401
 
     # Combine and hash the input parameters
-    combined_data = data['guardian_public_key'] + data['new_loser_address'] + data['old_loser_address']
+    combined_data = data['oldLoserAddress'] + data['guardianPublicKey'] + data['newLoserAddress'];
     data_hash = hashlib.sha256(combined_data.encode()).digest()
 
     # Load the guardian's provided public key
-    public_key = serialization.load_pem_public_key(data['guardian_public_key'].encode(), backend=default_backend())
+    public_key = serialization.load_pem_public_key(data['guardian_public_key'].encode(), 
+                                                   backend=default_backend())
 
     # Verify the signature
     try:
