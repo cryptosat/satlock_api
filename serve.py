@@ -46,7 +46,7 @@ def store_backup_key():
     print('store_backup_key')
     key = request.json
 
-    KEYS_AND_GUARDIANS[key['address']] = {
+    KEYS_AND_GUARDIANS[key['address'].lower()] = {
         "enc_backup_key": key['enc_backup_key'],
         "guardians": key['approved_guardians'],
         "approvals": 0,
@@ -63,7 +63,7 @@ def store_backup_key():
 def guardian_approve():
     print('guardian_approve')
     data = request.json
-    old_loser_address = data['old_loser_address']
+    old_loser_address = data['old_loser_address'].lower()
 
     # Verify the Guardian public key for the provided address
     entry = KEYS_AND_GUARDIANS.get(old_loser_address)
@@ -104,7 +104,7 @@ def restore_key():
     print('restorekey')
     
     # Replace this with how you're getting the old_user_address
-    old_loser_address = request.json['old_loser_address']
+    old_loser_address = request.json['old_loser_address'].lower()
 
     entry = KEYS_AND_GUARDIANS.get(old_loser_address)
     
