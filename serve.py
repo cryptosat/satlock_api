@@ -66,6 +66,7 @@ def guardian_approve():
     old_loser_address = data['old_loser_address'].lower()
 
     # Verify the Guardian public key for the provided address
+    # TODO: Add that each Guardian can only approve once
     entry = KEYS_AND_GUARDIANS.get(old_loser_address)
     if not entry or data['guardian_public_key'] not in entry['guardians']:
         return {"status": "Not an approved guardian for the provided wallet"}, 401
@@ -74,12 +75,13 @@ def guardian_approve():
     combined_data = data['old_loser_address'] + data['guardian_public_key'] + data['new_loser_address'];
     data_hash = hashlib.sha256(combined_data.encode()).digest()
 
-    # Load the guardian's provided public key
+    # TODO: Load the guardian's provided public key
     # public_key = serialization.load_pem_public_key(data['guardian_public_key'].encode(), 
     #                                                backend=default_backend())
     public_key = data['guardian_public_key']
 
-    # Verify the signature
+    
+    # TODO: Verify the signature
     # try:
     #     public_key.verify(
     #         bytes.fromhex(data['signed_hash']),
@@ -114,6 +116,7 @@ def restore_key():
     if entry['approvals'] < GUARDIAN_THRESHOLD:
         abort(400, "Insufficient approvals")
 
+    #TODO: Encrypt recovered key with newly provided KEY
     # Decrypt the backup key
     # decrypted_key = PRIVATE_KEY.decrypt(
     #     entry["enc_backup_key"].encode(),
