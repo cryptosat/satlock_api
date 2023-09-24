@@ -6,7 +6,6 @@ from cryptography.hazmat.primitives import serialization, hashes, asymmetric
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
-import json
 
 app = Flask(__name__)
 CORS(app)
